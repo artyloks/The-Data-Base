@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "The Brain: AI Agent Architecture"
+version = "1.0.0"
+id = "artifacts/the-brain"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23538
+
+[services.development]
+run = "pnpm --filter @workspace/the-brain run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/the-brain", "run", "build" ]
+publicDir = "artifacts/the-brain/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23538"
+BASE_PATH = "/"

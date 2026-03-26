@@ -1,0 +1,362 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.2.0
+  description: The Brain — Hacker-First AI Agent Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: agent
+    description: Agent interaction operations
+  - name: flywheel
+    description: Flywheel Aider Bot — real-time code improvement engine
+  - name: cli
+    description: CLI and GitHub Actions generator
+  - name: mcp
+    description: MCP server configuration generator
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /agent/chat:
+    post:
+      operationId: sendMessage
+      tags: [agent]
+      summary: Send a message to the agent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+      responses:
+        "200":
+          description: Agent response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+
+  /agent/history:
+    get:
+      operationId: getChatHistory
+      tags: [agent]
+      summary: Get chat history
+      responses:
+        "200":
+          description: Chat history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatHistory"
+
+  /agent/reset:
+    post:
+      operationId: resetChat
+      tags: [agent]
+      summary: Reset chat session
+      responses:
+        "200":
+          description: Reset successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResetResponse"
+
+  /flywheel/analyze:
+    post:
+      operationId: flywheelAnalyze
+      tags: [flywheel]
+      summary: Analyze code and stream improvements via SSE
+      description: Sends code context to the AI and streams back improvement suggestions in real-time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlywheelRequest"
+      responses:
+        "200":
+          description: SSE stream of improvements
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+  /flywheel/history:
+    get:
+      operationId: getFlywheelHistory
+      tags: [flywheel]
+      summary: Get past flywheel analysis runs
+      responses:
+        "200":
+          description: Flywheel run history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlywheelHistory"
+
+  /cli/generate-actions:
+    post:
+      operationId: generateGithubActions
+      tags: [cli]
+      summary: Generate GitHub Actions workflow YAML
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CliRequest"
+      responses:
+        "200":
+          description: Generated workflow file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CliResponse"
+
+  /mcp/generate-config:
+    post:
+      operationId: generateMcpConfig
+      tags: [mcp]
+      summary: Generate VS Code MCP server config
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/McpConfigRequest"
+      responses:
+        "200":
+          description: Generated MCP config JSON
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpConfigResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    ChatRequest:
+      type: object
+      properties:
+        message:
+          type: string
+        sessionId:
+          type: string
+      required: [message]
+
+    ChatResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+          enum: [assistant]
+        content:
+          type: string
+        toolCalls:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToolCall"
+        thinking:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required: [id, role, content, timestamp]
+
+    ToolCall:
+      type: object
+      properties:
+        name:
+          type: string
+        input:
+          type: object
+          additionalProperties: true
+        output:
+          type: string
+        status:
+          type: string
+          enum: [pending, success, error]
+      required: [name, status]
+
+    ChatHistory:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+        sessionId:
+          type: string
+      required: [messages, sessionId]
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        toolCalls:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToolCall"
+        thinking:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required: [id, role, content, timestamp]
+
+    ResetResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success, message]
+
+    FlywheelRequest:
+      type: object
+      properties:
+        files:
+          type: array
+          description: List of file contexts to analyze
+          items:
+            $ref: "#/components/schemas/FileContext"
+        focusArea:
+          type: string
+          description: Specific area to focus improvement on (e.g. "performance", "security", "architecture")
+        projectType:
+          type: string
+          description: Type of project (e.g. "react-vite", "express-api", "expo-mobile")
+      required: [files]
+
+    FileContext:
+      type: object
+      properties:
+        path:
+          type: string
+        content:
+          type: string
+        language:
+          type: string
+      required: [path, content]
+
+    FlywheelHistory:
+      type: object
+      properties:
+        runs:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlywheelRun"
+      required: [runs]
+
+    FlywheelRun:
+      type: object
+      properties:
+        id:
+          type: string
+        projectType:
+          type: string
+        focusArea:
+          type: string
+        fileCount:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+        summary:
+          type: string
+      required: [id, fileCount, timestamp]
+
+    CliRequest:
+      type: object
+      properties:
+        projectType:
+          type: string
+          enum: [react-vite, express-api, expo-mobile, python-fastapi, fullstack-monorepo]
+          description: Type of project to generate Actions for
+        deployTarget:
+          type: string
+          enum: [github-pages, vercel, railway, fly-io, aws-ec2, none]
+          description: Where to deploy
+        features:
+          type: array
+          items:
+            type: string
+          description: Additional features (e.g. "docker", "lint", "test", "security-scan")
+        repoName:
+          type: string
+          description: GitHub repository name
+      required: [projectType, deployTarget]
+
+    CliResponse:
+      type: object
+      properties:
+        filename:
+          type: string
+        yaml:
+          type: string
+        setupInstructions:
+          type: string
+        secretsNeeded:
+          type: array
+          items:
+            type: string
+      required: [filename, yaml, setupInstructions, secretsNeeded]
+
+    McpConfigRequest:
+      type: object
+      properties:
+        serverUrl:
+          type: string
+          description: Base URL of the deployed Brain instance
+        tools:
+          type: array
+          items:
+            type: string
+          description: Which MCP tools to enable (e.g. "brave-search", "local-bash", "supabase")
+        editorType:
+          type: string
+          enum: [vscode, cursor, windsurf, neovim]
+          description: Target editor
+      required: [tools, editorType]
+
+    McpConfigResponse:
+      type: object
+      properties:
+        filename:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+        instructions:
+          type: string
+      required: [filename, config, instructions]

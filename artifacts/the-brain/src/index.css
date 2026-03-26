@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --font-sans: 'Rajdhani', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
+  --font-heading: 'Chakra Petch', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --animate-glow: glow 3s ease-in-out infinite alternate;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-scanline: scanline 8s linear infinite;
+  --animate-pulse-fast: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-blink: blink 1s step-end infinite;
+}
+
+:root {
+  /* Ultra Dark Hacker Theme */
+  --background: 240 10% 4%;
+  --foreground: 120 100% 80%; /* Soft green text */
+  
+  --border: 120 100% 20%;
+  --input: 240 10% 6%;
+  --ring: 120 100% 50%;
+  
+  --card: 240 10% 6%;
+  --card-foreground: 120 100% 80%;
+  --card-border: 120 100% 20%;
+  
+  /* Hacker Neon Green */
+  --primary: 120 100% 50%;
+  --primary-foreground: 240 10% 4%;
+  
+  /* Electric Cyan */
+  --secondary: 180 100% 50%;
+  --secondary-foreground: 240 10% 4%;
+  
+  --muted: 240 10% 10%;
+  --muted-foreground: 120 40% 50%;
+  
+  --accent: 120 100% 50%;
+  --accent-foreground: 240 10% 4%;
+  
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 0 0% 100%;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden selection:bg-primary/30 selection:text-primary;
+    background-image: 
+      radial-gradient(circle at 10% 20%, hsl(var(--primary) / 0.03) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, hsl(var(--secondary) / 0.03) 0%, transparent 40%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-wider uppercase;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px hsl(var(--primary) / 0.6), 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  
+  .text-glow-cyan {
+    text-shadow: 0 0 10px hsl(var(--secondary) / 0.6), 0 0 20px hsl(var(--secondary) / 0.3);
+  }
+
+  .box-glow {
+    box-shadow: 0 0 15px -2px hsl(var(--primary) / 0.4), inset 0 0 10px -2px hsl(var(--primary) / 0.2);
+  }
+
+  .box-glow-cyan {
+    box-shadow: 0 0 15px -2px hsl(var(--secondary) / 0.4), inset 0 0 10px -2px hsl(var(--secondary) / 0.2);
+  }
+
+  .glass-terminal {
+    @apply bg-background/80 backdrop-blur-md border border-primary/30 relative overflow-hidden;
+  }
+
+  .glass-terminal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+    opacity: 0.5;
+  }
+
+  .tech-grid {
+    background-size: 30px 30px;
+    background-image: 
+      linear-gradient(to right, hsl(var(--primary) / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--primary) / 0.05) 1px, transparent 1px);
+    mask-image: linear-gradient(to bottom, black 20%, transparent);
+  }
+  
+  .terminal-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .terminal-scrollbar::-webkit-scrollbar-track {
+    @apply bg-black border-l border-primary/20;
+  }
+  .terminal-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-primary/30 hover:bg-primary/50 transition-colors;
+  }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px hsl(var(--primary)/0.2), inset 0 0 5px hsl(var(--primary)/0.1); }
+  100% { box-shadow: 0 0 20px hsl(var(--primary)/0.5), inset 0 0 10px hsl(var(--primary)/0.2); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 0.1; }
+  90% { opacity: 0.1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@keyframes pulse-fast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Custom Markdown Styles for Terminal */
+.markdown-body pre {
+  @apply bg-black border border-primary/30 p-4 rounded-md my-4 overflow-x-auto;
+  scrollbar-width: thin;
+}
+.markdown-body code {
+  @apply font-mono text-secondary text-sm;
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  @apply text-primary font-display mt-6 mb-2 border-b border-primary/20 pb-1;
+}
+.markdown-body p {
+  @apply mb-4 leading-relaxed;
+}
+.markdown-body ul {
+  @apply list-disc pl-6 mb-4 marker:text-primary;
+}
+.markdown-body li {
+  @apply mb-1;
+}

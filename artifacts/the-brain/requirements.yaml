@@ -1,0 +1,14 @@
+packages:
+  "framer-motion": "Required for smooth cinematic and hacker-style animations"
+  "lucide-react": "Required for terminal and tech-themed icons"
+  "clsx": "Required for conditional tailwind class merging"
+  "tailwind-merge": "Required for conditional tailwind class merging"
+
+images:
+  - path: "artifacts/the-brain/public/images/matrix-bg.png"
+    description: "Dark, moody cinematic matrix digital rain background, subtle and not overwhelming, very dark background with glowing cyan and neon green data streams"
+    aspect_ratio: "16:9"
+
+notes:
+  - "Using custom SSE hook for Flywheel endpoint since Orval doesn't support SSE hooks natively"
+  - "Enforcing dark mode via CSS root variables to match hacker aesthetic"
